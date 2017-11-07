@@ -3,9 +3,8 @@
 /**
  * Module dependencies.
  */
-
 var app = require('../app');
-var debug = require('debug')('nodejs-snapchatclone:server');
+var debug = require('debug')('base-nodejs:server');
 var http = require('http');
 
 /**
