@@ -9,6 +9,8 @@ var user = sql.define({
 
 var User = function () { }
 
+User.sql = user
+
 User.getById = function (id, callback) {
     var query = user.select(user.id, user.username).from(user).where(user.id.equals(id)).toQuery()
     db.query({
