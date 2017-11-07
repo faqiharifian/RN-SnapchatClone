@@ -15,3 +15,7 @@ exports.list = function (req, res) {
         }
     });
 }
+
+exports.post = function (req, res) {
+    res.send(req.body)
+}
