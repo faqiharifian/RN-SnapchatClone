@@ -32,7 +32,7 @@ class Messages extends Component {
         return (
             <View style={styles.message}>
                 <View style={styles.messageContent}>
-                    <Text style={styles.messageText}>From: {item.sender}</Text>
+                    <Text style={styles.messageText}>From: {item.from_name}</Text>
                     <Text style={styles.messageText}>{item.content}</Text>
                 </View>
             </View>
@@ -58,7 +58,6 @@ class Messages extends Component {
         })
             .then((response) => response.json())
             .then((responseJson) => {
-                alert(JSON.stringify(responseJson))
                 if (responseJson.success) {
                     this.setState({
                         user: responseJson.data
@@ -110,7 +109,7 @@ class Messages extends Component {
                     data={this.state.messages}
                     renderItem={({ item }) => this._renderMessage(item)}
                     />
-                <AddMessage addMessage={() => this.addMessage()}/>
+                <AddMessage user={this.state.user}/>
             </View>    
         )
     }
