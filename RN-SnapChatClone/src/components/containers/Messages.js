@@ -6,7 +6,8 @@ import {
     FlatList,
     TouchableOpacity,
     StyleSheet,
-    Modal
+    Modal,
+    Button
 } from 'react-native'
 import { AddMessage } from '../presentations'
 import configs from '../../configs'
@@ -22,12 +23,9 @@ class Messages extends Component {
             login: {
                 username: '',
                 password: ''
-            }
+            },
+            user: null
         }
-    }
-
-    addMessage() {
-        alert('Message Added')
     }
 
     _renderMessage(item) {
@@ -49,13 +47,36 @@ class Messages extends Component {
         })
     }
 
-    componentDidMount() {
-        fetch(configs.url.message.get)
+    submit() { 
+        fetch(configs.url.auth.post, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(this.state.login)
+        })
             .then((response) => response.json())
             .then((responseJson) => {
-                this.setState({
-                    messages: responseJson.data
-                })
+                alert(JSON.stringify(responseJson))
+                if (responseJson.success) {
+                    this.setState({
+                        user: responseJson.data
+                    })
+                    fetch(configs.url.message.get + "?id=" + this.state.user.id)
+                        .then((response) => response.json())
+                        .then((responseJson) => {
+                            this.setState({
+                                messages: responseJson.data,
+                                modalVisible: false
+                            })
+                        })
+                        .catch((error) => {
+                            console.error(error)
+                        })
+                } else {
+                    alert(responseJson.message)
+                }    
             })
             .catch((error) => {
                 console.error(error)
@@ -67,16 +88,19 @@ class Messages extends Component {
             <View style={styles.main}>
                 <Modal
                     transparent={true}
-                    visible={this.state.modalVisible}>
+                    visible={this.state.modalVisible}
+                    onRequestClose={() => {}}>
                     <View style={styles.modal}>
                         <View style={styles.login}>
-                            <Text>Login / Sign Up</Text>    
+                            <Text style={styles.modalTitle}>Login / Sign Up</Text>    
                             <Text>Username</Text>    
                             <TextInput onChangeText={(text) => this.updateLogin('username', text)}/>    
                             <Text>Password</Text>
                             <TextInput onChangeText={(text) => this.updateLogin('password', text)} />    
-                            <TouchableOpacity>
-                                <Text>Submit</Text>
+                            <TouchableOpacity
+                                onPress={() => this.submit()}    
+                                style={styles.buttonModal}>
+                                    <Text>Submit</Text>
                             </TouchableOpacity>    
                         </View>    
                     </View>
@@ -122,8 +146,16 @@ const styles = StyleSheet.create({
     },
     login: {
         width: '90%',
-        height: '30%',
         backgroundColor: 'rgb(255,255,255)',
+        padding: 10,
+    },
+    modalTitle: {
+        alignSelf: 'center',
+        fontWeight: 'bold',
+        fontSize: 14
+    },
+    buttonModal: {
+        alignSelf: 'flex-end'
     }
 })
 
