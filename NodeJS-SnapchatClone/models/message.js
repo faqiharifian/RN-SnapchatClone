@@ -34,4 +34,17 @@ Message.getByToId = function (id, callback) {
     })
 }
 
+Message.insert = function (from_id, to_id, content, callback) {
+    var query = message.insert(message.from_id.value(from_id), message.to_id.value(to_id), message.content.value(content)).toQuery()
+
+    db.query({
+        sql: query.text,
+        values: query.values
+    }, function (err, results, fields) {
+        if (err) throw callback(err)
+        
+        callback(null, results)
+    })
+}
+
 module.exports = Message;
